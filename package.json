@@ -1,0 +1,39 @@
+{
+  "name": "koa2-starter.git",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pandora dev --env=\"NODE_ENV=development\"",
+    "start": "pandora start --env=\"NODE_ENV=production\"",
+    "stop": "pandora stop"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wowhy/koa2-starter.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/wowhy/koa2-starter/issues"
+  },
+  "homepage": "https://github.com/wowhy/koa2-starter#readme",
+  "dependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "graphql": "^0.13.2",
+    "koa": "^2.5.0",
+    "koa-bodyparser": "^4.2.0",
+    "koa-compress": "^2.0.0",
+    "koa-graphql": "^0.7.5",
+    "koa-redis": "^3.1.2",
+    "koa-router": "^7.4.0",
+    "koa-session": "^5.8.1",
+    "koa-static-cache": "^5.1.2",
+    "merge": "^1.2.0",
+    "pandora": "^1.8.17"
+  }
+}
