@@ -17,6 +17,13 @@ module.exports = function(ctx) {
       host: '127.0.0.1',
       port: 6379,
       password: ''
+    },
+    database: {
+      host: 'localhost',
+      port: '5432',
+      dbname: 'demo',
+      user: 'postgres',
+      password: 'hongyuan'
     }
   }
 

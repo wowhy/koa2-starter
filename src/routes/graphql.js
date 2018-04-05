@@ -9,7 +9,7 @@ router.all(
   '/graphql',
   graphql({
     schema,
-    graphiql: true
+    graphiql: process.env.NODE_ENV === 'development'
   })
 )
 

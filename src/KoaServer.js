@@ -6,6 +6,7 @@ import compress from 'koa-compress'
 import staticCache from 'koa-static-cache'
 import redis from 'koa-redis'
 import router from './routes'
+import { init } from './models'
 
 export default class KoaServer {
   constructor(context) {
@@ -42,6 +43,8 @@ export default class KoaServer {
       await next()
     })
     app.use(router.routes()).use(router.allowedMethods())
+
+    init(config.database)
 
     app.listen(port, () => {
       console.log(`Listening Port ${port}...`)

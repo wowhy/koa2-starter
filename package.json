@@ -34,6 +34,10 @@
     "koa-session": "^5.8.1",
     "koa-static-cache": "^5.1.2",
     "merge": "^1.2.0",
-    "pandora": "^1.8.17"
+    "pandora": "^1.8.17",
+    "pg": "^7.4.1",
+    "pg-hstore": "^2.3.2",
+    "sequelize": "^4.37.5",
+    "uuid": "^3.2.1"
   }
 }
