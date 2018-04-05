@@ -5,17 +5,19 @@ import bodyParser from 'koa-bodyparser'
 import compress from 'koa-compress'
 import staticCache from 'koa-static-cache'
 import redis from 'koa-redis'
-import router from './routes'
-import { init } from './models'
 
 export default class KoaServer {
   constructor(context) {
     this.config = context.config
   }
-  start() {
+  async start() {
     const config = this.config
     const app = new Koa()
     const port = config.port
+
+    const init = require('./models').init
+
+    await init(config.database)
 
     app.config = config
 
@@ -42,9 +44,10 @@ export default class KoaServer {
       ctx.config = config
       await next()
     })
-    app.use(router.routes()).use(router.allowedMethods())
 
-    init(config.database)
+    const router = require('./routes').default
+
+    app.use(router.routes()).use(router.allowedMethods())
 
     app.listen(port, () => {
       console.log(`Listening Port ${port}...`)

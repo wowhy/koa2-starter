@@ -9,9 +9,9 @@ export default function(db, DataTypes) {
       allowNull: false
     }
   }).associate = function({ Blog, Post }) {
-    console.log(Blog, Post)
-    Blog.hasMany(Post, {
-      foreignKey: 'blogId'
+    Blog.Posts = Blog.hasMany(Post, {
+      foreignKey: 'blogId',
+      as: 'Posts'
     })
   }
 }

@@ -13,8 +13,9 @@ export default function(db, DataTypes) {
       allowNull: false
     }
   }).associate = function({ Blog, Post }) {
-    Post.belongsTo(Blog, {
-      foreignKey: 'blogId'
+    Post.Blog = Post.belongsTo(Blog, {
+      foreignKey: 'blogId',
+      as: 'Blog'
     })
   }
 }
