@@ -1,5 +1,6 @@
 import { GraphQLList } from 'graphql'
 import { resolver, defaultArgs, defaultListArgs } from 'graphql-sequelize'
+
 import { Blog } from '../../models'
 import { BlogListType, BlogType } from './types'
 
@@ -13,7 +14,13 @@ export default {
     type: new GraphQLList(BlogListType),
     args: defaultListArgs(Blog),
     resolve: resolver(Blog, {
-      list: true
+      list: true,
+      before: (findOptions, args, context) => {
+        return findOptions
+      },
+      after: (result, args, context) => {
+        return result
+      }
     })
   }
 }
