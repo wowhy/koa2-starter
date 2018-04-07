@@ -26,6 +26,7 @@ module.exports = function(ctx) {
       password: 'hongyuan'
     },
     oauth: {
+      secret: 'qwe123,./',
       grants: ['password', 'refreshToken'],
       database: {
         host: 'localhost',

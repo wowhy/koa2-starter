@@ -1,95 +1,22 @@
-import Sequelize, { DataTypes } from 'sequelize'
+import { Op, fn } from 'sequelize'
+import jwt from 'jsonwebtoken'
 import uuid from 'uuid'
 
-export default function model(config) {
-  let db = new Sequelize(config.dbname, config.user, config.password, {
-    host: config.host,
-    port: config.port,
-    dialect: 'postgres',
-    operatorsAliases: false,
-    pool: {
-      max: 5,
-      min: 0,
-      acquire: 30000,
-      idle: 10000
-    }
-  })
-
-  const OAuthToken = db.define('OAuthToken', {
-    id: {
-      type: DataTypes.UUID,
-      primaryKey: true
-    },
-    userId: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    clientId: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    scope: {
-      type: DataTypes.STRING,
-      allowNull: true
-    },
-    accessToken: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    accessTokenExpiresAt: {
-      type: Sequelize.DATE,
-      allowNull: false
-    },
-    refreshToken: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    refreshTokenExpiresAt: {
-      type: Sequelize.DATE,
-      allowNull: false
-    }
-  })
-  const OAuthClient = db.define('OAuthClient', {
-    clientId: {
-      type: DataTypes.STRING,
-      primaryKey: true
-    },
-    clientSecret: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    redirectUris: {
-      type: Sequelize.ARRAY(Sequelize.STRING),
-      allowNull: false
-    },
-    grants: {
-      type: Sequelize.ARRAY(Sequelize.STRING),
-      allowNull: false
-    }
-  })
-  const User = db.define('User', {
-    id: {
-      type: DataTypes.UUID,
-      primaryKey: true
-    },
-    username: {
-      type: DataTypes.STRING,
-      allowNull: false
-    },
-    password: {
-      type: DataTypes.STRING,
-      allowNull: false
-    }
-  })
-
-  db.sync()
-
+export default function(config, { OAuthClient, OAuthToken, OAuthUser }) {
   return {
     generateAccessToken(client, user, scope) {
-      return uuid.v4()
-    },
-    generateRefreshToken(client, user, scope) {
-      return uuid.v4()
+      return jwt.sign(
+        {
+          sub: user.id,
+          username: user.username,
+          scope: scope,
+          client_id: client.clientId
+        },
+        config.secret,
+        {
+          expiresIn: config.accessTokenLifetime
+        }
+      )
     },
     getClient(clientId, clientSecret) {
       let where = {
@@ -103,7 +30,7 @@ export default function model(config) {
       }).then(raw => (raw ? raw.dataValues : null))
     },
     getUser(username, password) {
-      return User.findOne({
+      return OAuthUser.findOne({
         where: {
           username,
           password
@@ -116,7 +43,7 @@ export default function model(config) {
         scope: token.scope,
         clientId: client.clientId,
         userId: user.id,
-        accessToken: token.accessToken,
+        accessToken: 'jwt token',
         accessTokenExpiresAt: token.accessTokenExpiresAt,
         refreshToken: token.refreshToken,
         refreshTokenExpiresAt: token.refreshTokenExpiresAt
@@ -129,7 +56,59 @@ export default function model(config) {
       }
     },
     validateScope(user, client, scope) {
-      return true
+      if (!scope) {
+        return 'offline_access'
+      }
+      return scope
+    },
+    async getRefreshToken(refreshToken) {
+      let data = await OAuthToken.findOne({
+        where: {
+          refreshToken
+        }
+      })
+      if (!data) return false
+
+      let client = await OAuthClient.findById(data.clientId)
+      let user = await OAuthUser.findById(data.userId, {
+        attributes: { exclude: ['password'] }
+      })
+
+      if (!client || !user) return false
+
+      return {
+        refreshToken: data.refreshToken,
+        refreshTokenExpiresAt: data.refreshTokenExpiresAt,
+        scope: data.scope,
+        client: client.dataValues,
+        user: user.dataValues
+      }
+    },
+    async getAccessToken(accessToken) {
+      let data = jwt.decode(accessToken)
+      if (!data) return false
+
+      let client = await OAuthClient.findById(data.client_id)
+      let user = await OAuthUser.findById(data.sub, {
+        attributes: { exclude: ['password'] }
+      })
+
+      if (!client || !user) return false
+
+      return {
+        accessToken: accessToken,
+        accessTokenExpiresAt: new Date(data.exp * 1000),
+        scope: data.scope,
+        client: client.dataValues,
+        user: user.dataValues
+      }
+    },
+    async revokeToken(token) {
+      OAuthToken.destroy({
+        where: {
+          refreshToken: token.refreshToken
+        }
+      })
     }
   }
 }
