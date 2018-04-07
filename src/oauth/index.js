@@ -47,6 +47,7 @@ export default function(app, config) {
       refresh_token: false
     },
     allowExtendedTokenAttributes: true,
+    allowBearerTokensInQueryString: true,
     accessTokenLifetime: config.accessTokenLifetime,
     refreshTokenLifetime: config.refreshTokenLifetime
   }))

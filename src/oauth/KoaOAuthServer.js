@@ -49,7 +49,7 @@ class KoaOAuthServer {
         .authenticate(request, response)
         .then(async token => {
           ctx.state.oauth = { token: token }
-          await next()
+          if (next) await next()
         })
         .catch(err => {
           handleError(err, ctx)
@@ -71,7 +71,7 @@ class KoaOAuthServer {
         .then(async code => {
           ctx.state.oauth = { code: code }
           handleResponse(ctx, response)
-          await next()
+          if (next) await next()
         })
         .catch(err => {
           handleError(err, ctx)
