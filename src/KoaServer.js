@@ -5,6 +5,7 @@ import bodyParser from 'koa-bodyparser'
 import compress from 'koa-compress'
 import staticCache from 'koa-static-cache'
 import redis from 'koa-redis'
+import oauthServer from './oauth'
 
 export default class KoaServer {
   constructor(context) {
@@ -39,6 +40,8 @@ export default class KoaServer {
       )
     )
     app.use(staticCache('./static', config.static))
+
+    oauthServer(app, config.oauth)
 
     app.use(async (ctx, next) => {
       ctx.config = config

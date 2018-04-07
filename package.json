@@ -36,6 +36,7 @@
     "koa-session": "^5.8.1",
     "koa-static-cache": "^5.1.2",
     "merge": "^1.2.0",
+    "oauth2-server": "git://github.com/oauthjs/node-oauth2-server.git#dev",
     "pandora": "^1.8.17",
     "pg": "^7.4.1",
     "pg-hstore": "^2.3.2",

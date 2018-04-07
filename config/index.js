@@ -24,6 +24,16 @@ module.exports = function(ctx) {
       dbname: 'demo',
       user: 'postgres',
       password: 'hongyuan'
+    },
+    oauth: {
+      grants: ['password', 'refreshToken'],
+      database: {
+        host: 'localhost',
+        port: '5432',
+        dbname: 'demo',
+        user: 'postgres',
+        password: 'hongyuan'
+      }
     }
   }
 

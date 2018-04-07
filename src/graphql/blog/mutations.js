@@ -1,6 +1,5 @@
 import { resolver } from 'graphql-sequelize'
 
-import { Blog } from '../../models'
 import { BlogType, BlogInputType } from './types'
 import proxy from '../../proxy/blog'
 
