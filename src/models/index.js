@@ -1,5 +1,7 @@
 import Sequelize, { QueryTypes, DataTypes, Op, fn, col } from 'sequelize'
 
+import logger from '../../fx/logger'
+
 const OperatorsAliases = {
   $eq: Op.eq,
   $ne: Op.ne,
@@ -60,7 +62,8 @@ db.init = function init(config) {
       min: 0,
       acquire: 30000,
       idle: 10000
-    }
+    },
+    logging: (message) => logger.log(message, process.pid)
   })
 
   db.query = sequelize.query.bind(sequelize)

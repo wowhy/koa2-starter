@@ -2,7 +2,10 @@ import { Op, fn } from 'sequelize'
 import jwt from 'jsonwebtoken'
 import uuid from 'uuid'
 
-export default function(config, { OAuthClient, OAuthToken, OAuthUser }) {
+import db from './db'
+
+export default function(config) {
+  const { OAuthClient, OAuthToken, OAuthUser } = db(config)
   return {
     generateAccessToken(client, user, scope) {
       return jwt.sign(

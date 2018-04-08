@@ -1,6 +1,6 @@
 'use strict'
 
-const debug = require('debug')('koa:oauth2-server'),
+const logger = require('../logger'),
   OAuthServer = require('oauth2-server'),
   Request = OAuthServer.Request,
   Response = OAuthServer.Response
@@ -39,9 +39,9 @@ class KoaOAuthServer {
 
   // Returns token authentication middleware
   authenticate() {
-    debug('Creating authentication endpoint middleware')
+    logger.debug('Creating authentication endpoint middleware', process.pid)
     return async (ctx, next) => {
-      debug('Running authenticate endpoint middleware')
+      logger.debug('Running authenticate endpoint middleware', process.pid)
       const request = new Request(ctx.request),
         response = new Response(ctx.response)
 
@@ -60,9 +60,9 @@ class KoaOAuthServer {
   // Returns authorization endpoint middleware
   // Used by the client to obtain authorization from the resource owner
   authorize(options) {
-    debug('Creating authorization endpoint middleware')
+    logger.debug('Creating authorization endpoint middleware', process.pid)
     return async (ctx, next) => {
-      debug('Running authorize endpoint middleware')
+      logger.debug('Running authorize endpoint middleware', process.pid)
       const request = new Request(ctx.request),
         response = new Response(ctx.response)
 
@@ -82,9 +82,9 @@ class KoaOAuthServer {
   // Returns token endpoint middleware
   // Used by the client to exchange authorization grant for access token
   token() {
-    debug('Creating token endpoint middleware')
+    logger.debug('Creating token endpoint middleware', process.pid)
     return async (ctx, next) => {
-      debug('Running token endpoint middleware')
+      logger.debug('Running token endpoint middleware', process.pid)
       const request = new Request(ctx.request),
         response = new Response(ctx.response)
 
@@ -107,7 +107,7 @@ class KoaOAuthServer {
   // Returns scope check middleware
   // Used to limit access to a route or router to carriers of a certain scope.
   scope(required) {
-    debug(`Creating scope check middleware (${required})`)
+    logger.debug(`Creating scope check middleware (${required})`, process.pid)
     return (ctx, next) => {
       const result = this.checkScope(required, ctx.state.oauth.token)
       if (result !== true) {
@@ -123,7 +123,7 @@ class KoaOAuthServer {
 }
 
 function handleResponse(ctx, response) {
-  debug(`Preparing success response (${response.status})`)
+  logger.debug(`Preparing success response (${response.status})`, process.pid)
   ctx.set(response.headers)
   ctx.status = response.status
   ctx.body = response.body
@@ -131,7 +131,7 @@ function handleResponse(ctx, response) {
 
 // Add custom headers to the context, then propagate error upwards
 function handleError(err, ctx) {
-  debug(`Preparing error response (${err.code || 500})`)
+  logger.debug(`Preparing error response (${err.code || 500})`, process.pid)
 
   const response = new Response(ctx.response)
   ctx.set(response.headers)

@@ -5,7 +5,9 @@ import bodyParser from 'koa-bodyparser'
 import compress from 'koa-compress'
 import staticCache from 'koa-static-cache'
 import redis from 'koa-redis'
+
 import oauthServer from './oauth'
+import logger from '../fx/logger'
 
 export default class KoaServer {
   constructor(context) {
@@ -53,10 +55,10 @@ export default class KoaServer {
     app.use(router.routes()).use(router.allowedMethods())
 
     app.listen(port, () => {
-      console.log(`Listening Port ${port}...`)
+      logger.info(`Listening Port ${port}...`)
     })
   }
   stop() {
-    console.log('Stoping')
+    logger.info('Stoping')
   }
 }
