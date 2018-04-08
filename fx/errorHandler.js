@@ -18,6 +18,7 @@ export default async function(ctx, next) {
       }
     }
   } catch (ex) {
+    logger.error(ex)
     if (ctx.status < 400) {
       ctx.status = ex.status || 500
     }
