@@ -19,7 +19,7 @@ db.init = async function init(config) {
       acquire: 30000,
       idle: 10000
     },
-    logging: message => logger.info(message, process.pid)
+    logging: message => logger.info(message, `pid=${process.pid}`)
   })
 
   sequelize.import('./models/client')

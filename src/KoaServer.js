@@ -8,6 +8,7 @@ import redis from 'koa-redis'
 
 import oauthServer from './oauth'
 import logger from '../fx/logger'
+import errorHandler from '../fx/errorHandler'
 
 export default class KoaServer {
   constructor(context) {
@@ -24,6 +25,8 @@ export default class KoaServer {
     app.config = config
 
     app.keys = config.secrets
+
+    app.use(errorHandler)
 
     app.use(bodyParser())
     app.use(compress())
