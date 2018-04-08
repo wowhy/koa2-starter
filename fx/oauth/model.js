@@ -5,7 +5,8 @@ import uuid from 'uuid'
 import db from './db'
 
 export default function(config) {
-  const { OAuthClient, OAuthToken, OAuthUser } = db(config)
+  const { OAuthClient, OAuthToken, OAuthUser } = db
+
   return {
     generateAccessToken(client, user, scope) {
       return jwt.sign(

@@ -1,3 +1,4 @@
-export default function(ctx, next) {
-  return ctx.app.oauth.authenticate()(ctx, next)
+export default async function(ctx, next) {
+  await ctx.app.oauth.authenticate()(ctx, next)
+  // console.log(ctx.state.oauth.token)
 }

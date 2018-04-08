@@ -18,9 +18,8 @@ export default class KoaServer {
     const app = new Koa()
     const port = config.port
 
-    const init = require('./models').init
-
-    await init(config.database)
+    await require('./models').init(config.database)
+    await require('../fx/oauth/db').init(config.oauth)
 
     app.config = config
 
@@ -43,7 +42,7 @@ export default class KoaServer {
     )
     app.use(staticCache('./static', config.static))
 
-    oauthServer(app, config.oauth)
+    await oauthServer(app, config.oauth)
 
     app.use(async (ctx, next) => {
       ctx.config = config

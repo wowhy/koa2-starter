@@ -5,9 +5,9 @@ import Router from 'koa-router'
 import Sequelize from 'sequelize'
 import util from 'util'
 
-export default function(app, config) {
+export default async function(app, config) {
   let oauth = (app.oauth = new KoaOAuthServer({
-    model: model(config),
+    model: await model(config),
     grants: config.grants,
     debug: process.env.NODE_ENV === 'development',
     requireClientAuthentication: {

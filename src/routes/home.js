@@ -1,6 +1,8 @@
 import Router from 'koa-router'
 import HomeCtrl from '../controllers/HomeCtrl'
 
+// import authenticate from '../middlewares/authenticate'
+
 const router = new Router()
 const ctrl = new HomeCtrl()
 

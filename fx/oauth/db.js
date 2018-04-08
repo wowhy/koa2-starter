@@ -2,11 +2,9 @@ import Sequelize from 'sequelize'
 
 import logger from '../logger'
 
-const db = {
-  initialize: false
-}
+const db = {}
 
-function initDatabase(config) {
+db.init = async function init(config) {
   config.accessTokenLifetime = config.accessTokenLifetime || 2 * 60 * 60
   config.refreshTokenLifetime = config.refreshTokenLifetime || 30 * 24 * 60 * 60
 
@@ -21,27 +19,18 @@ function initDatabase(config) {
       acquire: 30000,
       idle: 10000
     },
-    logging: (message) => logger.info(message, process.pid)
+    logging: message => logger.info(message, process.pid)
   })
 
   sequelize.import('./models/client')
   sequelize.import('./models/token')
   sequelize.import('./models/user')
 
-  sequelize.sync()
-
   Object.keys(sequelize.models).forEach(k => {
     db[k] = sequelize.models[k]
   })
 
-  db.initialize = true
+  await sequelize.sync()
 }
 
-export default function(config) {
-  if (db.initialize) {
-    return db
-  }
-
-  initDatabase(config)
-  return db
-}
+module.exports = db
