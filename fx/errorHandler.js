@@ -6,7 +6,7 @@ export default async function(ctx, next) {
   try {
     await next()
 
-    if (ctx.status >= 400 && !ctx.body.error) {
+    if (ctx.status >= 400 && ctx.body && !ctx.body.error) {
       if (ctx.path === '/graphql') ctx.body = JSON.parse(ctx.body)
       ctx.body = err = {
         error: {
@@ -22,7 +22,7 @@ export default async function(ctx, next) {
     if (ctx.status < 400) {
       ctx.status = ex.status || 500
     }
-    err = {
+    ctx.body = err = {
       error: {
         code: ex.code,
         message: ex.message

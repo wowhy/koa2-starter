@@ -11,6 +11,19 @@ const ePath = 'oauth2-server/lib/errors/',
   InvalidArgumentError = require(ePath + 'invalid-argument-error'),
   UnauthorizedRequestError = require(ePath + 'unauthorized-request-error')
 
+function build(ctx) {
+  if (!ctx.state.oauth) {
+    ctx.state.oauth = {}
+  }
+
+  const request = new Request(ctx.request),
+    response = new Response(ctx.response)
+  return {
+    request,
+    response
+  }
+}
+
 class KoaOAuthServer {
   constructor(options) {
     this.options = options || {}
@@ -42,16 +55,17 @@ class KoaOAuthServer {
     logger.debug('Creating authentication endpoint middleware')
     return async (ctx, next) => {
       logger.debug('Running authenticate endpoint middleware')
-      const request = new Request(ctx.request),
-        response = new Response(ctx.response)
+      const { request, response } = build(ctx)
 
       await this.server
         .authenticate(request, response)
         .then(async token => {
-          ctx.state.oauth = { token: token }
+          ctx.state.oauth.token = token
+          ctx.state.oauth.authenticated = true
           if (next) await next()
         })
         .catch(err => {
+          ctx.state.authenticated = false
           handleError(err, ctx)
         })
     }
@@ -63,13 +77,12 @@ class KoaOAuthServer {
     logger.debug('Creating authorization endpoint middleware')
     return async (ctx, next) => {
       logger.debug('Running authorize endpoint middleware')
-      const request = new Request(ctx.request),
-        response = new Response(ctx.response)
+      const { request, response } = build(ctx)
 
       await this.server
         .authorize(request, response, options)
         .then(async code => {
-          ctx.state.oauth = { code: code }
+          ctx.state.oauth.code = code
           handleResponse(ctx, response)
           if (next) await next()
         })
@@ -85,8 +98,7 @@ class KoaOAuthServer {
     logger.debug('Creating token endpoint middleware')
     return async (ctx, next) => {
       logger.debug('Running token endpoint middleware')
-      const request = new Request(ctx.request),
-        response = new Response(ctx.response)
+      const { request, response } = build(ctx)
 
       await this.server
         .token(request, response)
@@ -94,9 +106,10 @@ class KoaOAuthServer {
           return this.saveTokenMetadata(token, ctx.request)
         })
         .then(async token => {
-          ctx.state.oauth = { token: token }
+          ctx.state.oauth.token = token
+          ctx.state.oauth.authenticated = true
           handleResponse(ctx, response)
-          await next()
+          if (next) await next()
         })
         .catch(err => {
           handleError(err, ctx)
@@ -132,7 +145,6 @@ function handleResponse(ctx, response) {
 // Add custom headers to the context, then propagate error upwards
 function handleError(err, ctx) {
   logger.error(`Preparing error response (${err.code || 500})`)
-  logger.error(err)
 
   const response = new Response(ctx.response)
   ctx.set(response.headers)

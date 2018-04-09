@@ -108,11 +108,13 @@ export default function(config) {
       }
     },
     async revokeToken(token) {
-      OAuthToken.destroy({
-        where: {
-          refreshToken: token.refreshToken
-        }
-      })
+      return (
+        (await OAuthToken.destroy({
+          where: {
+            refreshToken: token.refreshToken
+          }
+        })) > 0
+      )
     }
   }
 }
