@@ -63,7 +63,7 @@ db.init = function init(config) {
       acquire: 30000,
       idle: 10000
     },
-    logging: message => logger.info(message, `pid=${process.pid}`)
+    logging: message => logger.execute(message)
   })
 
   db.query = sequelize.query.bind(sequelize)
