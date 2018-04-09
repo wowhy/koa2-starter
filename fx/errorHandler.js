@@ -31,5 +31,11 @@ export default async function(ctx, next) {
   }
 
   let time = new Date() - start
-  logger.info(`POST ${ctx.req.url} status=${ctx.status} time=${time}ms error=${JSON.stringify(err)}`)
+  logger.info(
+    `POST ${ctx.req.url} status=${ctx.status} time=${time}ms error=${JSON.stringify(err)} logged=${
+      ctx.state.oauth && ctx.state.oauth.token && ctx.state.oauth.token.user
+        ? ctx.state.oauth.token.user.id + ':' + ctx.state.oauth.token.user.username
+        : false
+    }`
+  )
 }

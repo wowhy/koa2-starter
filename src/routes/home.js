@@ -6,6 +6,7 @@ import HomeCtrl from '../controllers/HomeCtrl'
 const router = new Router()
 const ctrl = new HomeCtrl()
 
+// router.get('/', authenticate, ctrl.index)
 router.get('/', ctrl.index)
 router.get('*', ctrl.error404)
 
