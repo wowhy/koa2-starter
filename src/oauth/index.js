@@ -1,6 +1,5 @@
 import KoaOAuthServer from '../../fx/oauth/KoaOAuthServer'
 import model from '../../fx/oauth/model'
-import User from '../../fx/oauth/User'
 
 import Router from 'koa-router'
 import Sequelize from 'sequelize'
@@ -25,6 +24,6 @@ export default async function(app, config) {
 
   router.post('/oauth/token', oauth.token())
 
-  app.use(User.build(oauth))
+  app.use(oauth.user())
   app.use(router.routes())
 }

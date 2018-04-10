@@ -11,6 +11,8 @@ const ePath = 'oauth2-server/lib/errors/',
   InvalidArgumentError = require(ePath + 'invalid-argument-error'),
   UnauthorizedRequestError = require(ePath + 'unauthorized-request-error')
 
+const User = require('./User')
+
 function build(ctx) {
   if (!ctx.state.oauth) {
     ctx.state.oauth = {}
@@ -132,6 +134,10 @@ class KoaOAuthServer {
 
       return next()
     }
+  }
+
+  user() {
+    return User.build(this)
   }
 }
 
