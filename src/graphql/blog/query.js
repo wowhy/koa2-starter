@@ -1,7 +1,9 @@
 import { GraphQLList } from 'graphql'
 import { resolver, defaultArgs, defaultListArgs } from 'graphql-sequelize'
 
-import { Blog } from '../../models'
+import { paginationTyper, paginationResolver } from '../../../fx/graphql/paginationResolver'
+
+import { Blog, Post } from '../../models'
 import { BlogListType, BlogType } from './types'
 
 export default {
@@ -11,11 +13,12 @@ export default {
     resolve: resolver(Blog, {})
   },
   blogs: {
-    type: new GraphQLList(BlogListType),
+    type: paginationTyper(BlogListType),
     args: defaultListArgs(Blog),
-    resolve: resolver(Blog, {
+    resolve: paginationResolver(Blog, {
       list: true,
-      before: (findOptions, args, context) => {
+      before: (findOptions, args, context, document) => {
+        // findOptions.include = ['posts']
         return findOptions
       },
       after: (result, args, context) => {

@@ -11,7 +11,7 @@ export default function(db, DataTypes) {
   }).associate = function({ Blog, Post }) {
     Blog.Posts = Blog.hasMany(Post, {
       foreignKey: 'blogId',
-      as: 'Posts'
+      as: 'posts'
     })
   }
 }
