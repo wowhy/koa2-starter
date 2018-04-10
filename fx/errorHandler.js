@@ -1,3 +1,5 @@
+import util from 'util'
+
 import logger from './logger'
 
 export default async function(ctx, next) {
@@ -6,25 +8,32 @@ export default async function(ctx, next) {
   try {
     await next()
 
-    if (ctx.status >= 400 && ctx.body && !ctx.body.error) {
-      if (ctx.path === '/graphql') ctx.body = JSON.parse(ctx.body)
-      ctx.body = err = {
-        error: {
-          code: ctx.status,
-          message:
-            ctx.body.message ||
-            (ctx.body.errors && ctx.body.errors.length > 0 ? ctx.body.errors[0].message : 'Failed!')
+    if (ctx.status >= 400 && ctx.path === '/graphql') {
+      err = util.isString(ctx.body) ? JSON.parse(ctx.body) : ctx.body
+      let innerErr = err.errors[0]
+      try {
+        err = JSON.parse(innerErr.message)
+      } catch (ex) {
+        err = {
+          error: {
+            code: ctx.status,
+            type: 'GraphqlException',
+            message: innerErr.message
+          }
         }
       }
+
+      ctx.body = err
     }
   } catch (ex) {
     logger.error(ex)
     if (ctx.status < 400) {
-      ctx.status = ex.status || 500
+      ctx.status = ex.code || 500
     }
     ctx.body = err = {
       error: {
         code: ex.code,
+        type: ex.type || ex.toString(),
         message: ex.message
       }
     }

@@ -1,8 +1,10 @@
 import { resolver } from 'graphql-sequelize'
 
+import { graphqlValidate } from '../../../fx/validation/graphqlValidate'
+
 import { BlogType, BlogInputType } from './types'
-import proxy from '../../proxy/blog'
-import authenticate from '../../middlewares/authenticate'
+import { blog as proxy } from '../../proxy'
+import { createBlogValidation } from './validation'
 
 export default {
   createBlog: {
@@ -12,9 +14,8 @@ export default {
         type: BlogInputType
       }
     },
-    resolve: async (source, args, context, info) => {
-      await authenticate(context)
+    resolve: graphqlValidate(createBlogValidation, async (source, args, context, info) => {
       return proxy.create(args.input, context)
-    }
+    })
   }
 }
