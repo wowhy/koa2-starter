@@ -7,24 +7,6 @@ export default async function(ctx, next) {
   let err = false
   try {
     await next()
-
-    if (ctx.status >= 400 && ctx.path === '/graphql') {
-      err = util.isString(ctx.body) ? JSON.parse(ctx.body) : ctx.body
-      let innerErr = err.errors[0]
-      try {
-        err = JSON.parse(innerErr.message)
-      } catch (ex) {
-        err = {
-          error: {
-            code: ctx.status,
-            type: 'GraphqlException',
-            message: innerErr.message
-          }
-        }
-      }
-
-      ctx.body = err
-    }
   } catch (ex) {
     logger.error(ex)
     if (ctx.status < 400) {

@@ -1,15 +1,11 @@
 import { Rule } from '../rule'
 
-export default new Rule(async function(context, args, target) {
-  let authenticated = await context.user.isAuthenticated()
+export default new Rule(async function(args, user, target) {
+  let authenticated = await user.isAuthenticated()
   if (!authenticated) {
-    context.status = 401
-    throw new Error(
-      JSON.stringify({
-        code: 401,
-        type: 'AuthenticateFailed',
-        message: 'Unauthorized: Access is denied due to invalid credentials.'
-      })
-    )
+    let error = new Error('Unauthorized: Access is denied due to invalid credentials.')
+    error.code = 401
+    error.type = 'AuthenticateFailed'
+    throw error
   }
 })

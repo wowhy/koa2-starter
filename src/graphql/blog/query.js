@@ -1,34 +1,28 @@
 import { GraphQLList } from 'graphql'
-import { resolver, defaultArgs, defaultListArgs } from 'graphql-sequelize'
+import { argsToFindOptions, defaultArgs, defaultListArgs } from 'graphql-sequelize'
 
-import { graphqlValidate } from '../../../fx/validation/graphqlValidate'
-import { paginationTyper, paginationResolver } from '../../../fx/graphql/paginationResolver'
+import paginationTyper from '../../../fx/graphql/paginationTyper'
 
 import { Blog, Post } from '../../models'
 import { BlogListType, BlogType } from './types'
-import { secretBlogRule } from './rules'
+
+import { blog as proxy } from '../../proxy'
+
+const fields = Object.keys(Blog.rawAttributes)
 
 export default {
   blog: {
     type: BlogType,
     args: defaultArgs(Blog),
-    resolve: resolver(Blog, {})
+    resolve: (source, args, context, info) => {
+      return proxy.findOne(argsToFindOptions.default(args, fields), context.user)
+    }
   },
   blogs: {
     type: paginationTyper(BlogListType),
     args: defaultListArgs(Blog),
-    resolve: graphqlValidate(
-      secretBlogRule,
-      paginationResolver(Blog, {
-        list: true,
-        before: (findOptions, args, context, document) => {
-          // findOptions.include = ['posts']
-          return findOptions
-        },
-        after: (result, args, context) => {
-          return result
-        }
-      })
-    )
+    resolve: (source, args, context, info) => {
+      return proxy.pagination(argsToFindOptions.default(args, fields), context.user)
+    }
   }
 }

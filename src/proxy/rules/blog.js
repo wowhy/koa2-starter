@@ -1,13 +1,13 @@
-import { Rule, Rules } from '../../../fx/validation/rule'
+import { Rule, RuleProcessor } from '../../../fx/validation/rule'
 import authenticateRule from '../../../fx/validation/rules/authenticateRule'
 
-export const createBlogRule = new Rules([authenticateRule])
+export const createBlogRule = new RuleProcessor([authenticateRule])
 
-export const secretBlogRule = new Rules(
+export const secretBlogRule = new RuleProcessor(
   [],
   [
-    new Rule(async (context, args, target) => {
-      if (!await context.user.isAuthenticated()) {
+    new Rule(async (args, user, target) => {
+      if (!await user.isAuthenticated()) {
         if (target.url) {
           target.url = '****'
         } else if (target.items && target.items.length > 0) {

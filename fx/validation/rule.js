@@ -7,12 +7,12 @@ export class Rule {
     this.validator = validator
   }
 
-  validate(context, args, target) {
-    return promisify(this.validator, 3).call(this, context, args, target)
+  validate(args, user, target) {
+    return promisify(this.validator, 3).call(this, args, user, target)
   }
 }
 
-export class Rules {
+export class RuleProcessor {
   constructor(befores = [], afters = []) {
     this.befores = befores
     this.afters = afters
@@ -26,15 +26,15 @@ export class Rules {
     this.afters.push(rule)
   }
 
-  async validate(context, args, callback) {
+  async process(args, user, targetFn) {
     for (let i = 0; i < this.befores.length; i++) {
-      await this.befores[i].validate(context, args)
+      await this.befores[i].validate(args, user)
     }
 
-    if (callback) {
-      let target = await callback()
+    if (targetFn) {
+      let target = await targetFn()
       for (let i = 0; i < this.afters.length; i++) {
-        await this.afters[i].validate(context, args, target)
+        await this.afters[i].validate(args, user, target)
       }
 
       return target

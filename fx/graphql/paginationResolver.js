@@ -1,8 +1,7 @@
-import { GraphQLList, GraphQLObjectType, GraphQLInt } from 'graphql'
 import { resolver } from 'graphql-sequelize'
 import { createContext, EXPECTED_OPTIONS_KEY } from 'dataloader-sequelize'
 
-export function paginationResolver(model, config) {
+export default function paginationResolver(model, config) {
   const findAndCountAll = findOptions => {
     return model.findAndCountAll(findOptions).then(res => ({ total: res.count, items: res.rows }))
   }
@@ -27,20 +26,4 @@ export function paginationResolver(model, config) {
     },
     config
   )
-}
-
-export function paginationTyper(type) {
-  return new GraphQLObjectType({
-    name: type.name + 'Pager',
-    fields: {
-      total: {
-        type: GraphQLInt,
-        description: 'total count'
-      },
-      items: {
-        type: new GraphQLList(type),
-        description: 'items'
-      }
-    }
-  })
 }
