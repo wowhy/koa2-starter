@@ -13,7 +13,9 @@ export default {
     })
   },
   findOne(options, user) {
-    return Blog.findOne(options)
+    return secretBlogRule.process(options, user, () => {
+      return Blog.findOne(options)
+    })
   },
   pagination(options, user) {
     return secretBlogRule.process(options, user, () => {
