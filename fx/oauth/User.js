@@ -49,8 +49,6 @@ class User {
         throw ex
       }
 
-      logger.error(ex)
-
       this.oauth.authenticated = false
     }
 
