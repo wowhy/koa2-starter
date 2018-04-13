@@ -1,9 +1,12 @@
 import util from 'util'
 import promisify from 'promisify-any'
 
+import HttpError from '../../fx/HttpError'
+
 export class Rule {
   constructor(validator) {
-    if (!util.isFunction(validator)) throw new Error('validator is not a function')
+    if (!util.isFunction(validator))
+      throw new HttpError(500, 'ArgumentException', 'validator is not a function')
     this.validator = validator
   }
 

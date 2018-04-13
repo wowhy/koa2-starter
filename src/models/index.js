@@ -1,6 +1,7 @@
 import Sequelize, { QueryTypes, DataTypes, Op, fn, col } from 'sequelize'
 
 import logger from '../../fx/logger'
+import HttpError from '../../fx/HttpError'
 
 const OperatorsAliases = {
   $eq: Op.eq,
@@ -47,7 +48,7 @@ const db = {
   fn,
   col,
   query: function() {
-    throw new Error('initialize failed')
+    throw new HttpError(500, 'InitializeFailed', 'initialize failed')
   }
 }
 
