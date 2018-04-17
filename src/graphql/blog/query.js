@@ -1,5 +1,6 @@
 import { GraphQLList } from 'graphql'
-import { argsToFindOptions, defaultArgs, defaultListArgs } from 'graphql-sequelize'
+import { defaultArgs, defaultListArgs } from 'graphql-sequelize'
+import argsToFindOptions from '../../utils/argsToFindOptions'
 
 import paginationTyper from '../../../fx/graphql/paginationTyper'
 
@@ -15,14 +16,14 @@ export default {
     type: BlogType,
     args: defaultArgs(Blog),
     resolve: (source, args, context, info) => {
-      return proxy.findOne(argsToFindOptions.default(args, fields), context.user)
+      return proxy.findOne(argsToFindOptions(args, fields), context.user)
     }
   },
   blogs: {
     type: paginationTyper(BlogListType),
     args: defaultListArgs(Blog),
     resolve: (source, args, context, info) => {
-      return proxy.pagination(argsToFindOptions.default(args, fields), context.user)
+      return proxy.pagination(argsToFindOptions(args, fields), context.user)
     }
   }
 }
