@@ -1,19 +1,20 @@
-import { GraphQLList } from 'graphql'
-import { resolver, defaultArgs, defaultListArgs } from 'graphql-sequelize'
-import { Post } from '../../models'
-import { PostListType, PostType } from './types'
+import argsToFindOptions from '../../utils/argsToFindOptions'
 
-export default {
-  post: {
-    type: PostType,
-    args: defaultArgs(Post),
-    resolve: resolver(Post, {})
+import { Blog, Post } from '../../models'
+import { post as proxy } from '../../proxy'
+
+const fields = Object.keys(Post.rawAttributes)
+
+export default `
+  post(id: String, where: SequelizeJSON): Blog
+  posts(offset: Int, limit: Int, where: SequelizeJSON, order: String): PostPageResult
+`
+
+export const resolver = {
+  post(args, context) {
+    return proxy.findOne(argsToFindOptions(args, fields), context.user)
   },
-  posts: {
-    type: new GraphQLList(PostListType),
-    args: defaultListArgs(Post),
-    resolve: resolver(Post, {
-      list: true
-    })
+  posts(args, context) {
+    return proxy.pagination(argsToFindOptions(args, fields), context.user)
   }
 }

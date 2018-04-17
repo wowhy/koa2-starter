@@ -1,24 +1,15 @@
-import { GraphQLObjectType, GraphQLList } from 'graphql'
-import { attributeFields, resolver } from 'graphql-sequelize'
-import { Blog, Post } from '../../models'
-
-export const PostListType = new GraphQLObjectType({
-  name: 'PostListType',
-  fields: {
-    ...attributeFields(Post, {})
+export default `
+  type Post implements Entity {
+    id: String
+    createdAt: String
+    updatedAt: String
+    title: String
+    content: String
+    blog: [Blog]
   }
-})
 
-export const PostType = new GraphQLObjectType({
-  name: 'PostType',
-  fields: {
-    ...attributeFields(Post, {}),
-    blog: {
-      type: new GraphQLObjectType({
-        name: 'PostPostsType',
-        fields: attributeFields(Blog, {})
-      }),
-      resolve: resolver(Post.Blog)
-    }
+  type PostPageResult {
+    total: Int
+    items: [Post]
   }
-})
+`

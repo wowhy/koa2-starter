@@ -1,5 +1,5 @@
 export default function(db, DataTypes) {
-  db.define('Blog', {
+  let Blog = db.define('Blog', {
     id: {
       type: DataTypes.UUID,
       primaryKey: true
@@ -8,10 +8,20 @@ export default function(db, DataTypes) {
       type: DataTypes.STRING,
       allowNull: false
     }
-  }).associate = function({ Blog, Post }) {
+  })
+
+  Blog.associate = function({ Blog, Post }) {
     Blog.Posts = Blog.hasMany(Post, {
       foreignKey: 'blogId',
       as: 'posts'
+    })
+  }
+
+  Blog.prototype.posts = function() {
+    return Blog.Posts.target.findAll({
+      where: {
+        blogId: this.id
+      }
     })
   }
 }
