@@ -1,4 +1,4 @@
-import argsToFindOptions from '../../utils/argsToFindOptions'
+import argsToFindOptions from '../../../fx/utils/argsToFindOptions'
 
 import { Blog, Post } from '../../models'
 import { post as proxy } from '../../proxy'
