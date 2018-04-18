@@ -7,7 +7,7 @@ export const secretBlogRule = new RuleProcessor(
   [],
   [
     new Rule(async (args, user, target) => {
-      if (!await user.isAuthenticated()) {
+      if (!await user.isAuthenticated() && target) {
         if (target.url) {
           target.url = '****'
         } else if (target.items && target.items.length > 0) {

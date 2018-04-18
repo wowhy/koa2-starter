@@ -1,5 +1,5 @@
 import { buildSchema, GraphQLString } from 'graphql'
-import SequelizeJSON from '../../fx/graphql/SequelizeJSON'
+import GraphQLJSON from '../../fx/graphql/GraphQLJSON'
 
 import blogTypes from './blog/types'
 import postTypes from './post/types'
@@ -24,7 +24,7 @@ const schema = buildSchema(`
     updatedAt: String
   }
 
-  scalar SequelizeJSON
+  scalar JSON
 
   ${blogTypes}
   ${postTypes}
@@ -38,5 +38,7 @@ const schema = buildSchema(`
     ${blogMutation}
   }
 `)
+
+Object.assign(schema._typeMap.JSON, GraphQLJSON)
 
 export default schema

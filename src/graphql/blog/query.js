@@ -6,8 +6,8 @@ import { blog as proxy } from '../../proxy'
 const fields = Object.keys(Blog.rawAttributes)
 
 export default `
-  blog(id: String, where: SequelizeJSON): Blog
-  blogs(offset: Int, limit: Int, where: SequelizeJSON, order: String): BlogPageResult
+  blog(id: String, where: JSON): Blog
+  blogs(offset: Int, limit: Int, where: JSON, order: String): BlogPageResult
 `
 
 export const resolver = {
